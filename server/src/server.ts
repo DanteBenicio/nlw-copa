@@ -1,0 +1,32 @@
+import { PrismaClient } from "@prisma/client";
+import Fastify from "fastify";
+
+const prisma = new PrismaClient({
+  log: ['query']
+})
+
+async function bootstrap() {
+  const fastify = Fastify({
+    logger: true
+  })
+
+  fastify.get('/pools/count', async () => {
+    const pools = await prisma.pool.findMany({
+      where: {
+        title: {
+          contains: "Dante"
+        }
+      }
+    })
+
+    return {
+      pools
+    }
+  })
+
+  await fastify.listen({
+    port: 3333
+  })
+}
+
+bootstrap()
